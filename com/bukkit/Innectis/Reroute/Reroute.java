@@ -9,7 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPlugin;
 /**
- * Routecraft
+ * Reroute
  *
  * Has:
  *   Accelerators
@@ -17,13 +17,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author 31
  */
-public class Routecraft extends JavaPlugin
+public class Reroute extends JavaPlugin
 {
 	private final RRVehicleMoveListener vehicleListener = new RRVehicleMoveListener(this);
 
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
-	public Routecraft(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
+	public Reroute(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
 	{
 		super(pluginLoader, instance, desc, folder, plugin, cLoader);
 	}

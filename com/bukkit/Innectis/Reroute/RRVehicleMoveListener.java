@@ -14,9 +14,9 @@ import org.bukkit.event.vehicle.VehicleListener;
  */
 public class RRVehicleMoveListener extends VehicleListener
 {
-	private final Routecraft plugin;
+	private final Reroute plugin;
 
-	public RRVehicleMoveListener(Routecraft instance)
+	public RRVehicleMoveListener(Reroute instance)
 	{
 		plugin = instance;
 	}
