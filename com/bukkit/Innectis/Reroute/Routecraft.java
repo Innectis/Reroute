@@ -1,4 +1,4 @@
-package com.bukkit.the31.Reroute;
+package com.bukkit.Innectis.Reroute;
 
 import java.io.File;
 import java.util.HashMap;

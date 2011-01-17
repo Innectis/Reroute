@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.bukkit.the31.Reroute;
+package com.bukkit.Innectis.Reroute;
 
 import org.bukkit.Material;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
@@ -29,7 +29,8 @@ public class RRVehicleMoveListener extends VehicleListener
 		int z = event.getFrom().getBlockZ();
 		Material m = plugin.getServer().getWorlds()[0].getBlockAt(x, y-1, z).getType();
 		if(Material.OBSIDIAN.equals(m))
-			if(event.getVehicle().getVelocity().lengthSquared() != 0.0)
+			if(event.getVehicle().getVelocity().lengthSquared() < -0.0001
+			 ||event.getVehicle().getVelocity().lengthSquared() >  0.0001)
 				event.getVehicle().setVelocity(event.getVehicle().getVelocity().normalize().multiply(1000000));
 	}
 }
