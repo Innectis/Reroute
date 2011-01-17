@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  *   Accelerators
  *     Place rails on top of obsidian.
  *
- * @author 31
+ * @author Innectis
  */
 public class Reroute extends JavaPlugin
 {
@@ -58,12 +58,9 @@ public class Reroute extends JavaPlugin
 
 	public boolean isDebugging(final Player player)
 	{
-		if (debugees.containsKey(player))
-		{
+		if (debugees.containsKey(player)) {
 			return debugees.get(player);
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
