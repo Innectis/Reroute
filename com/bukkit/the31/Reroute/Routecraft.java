@@ -1,0 +1,64 @@
+package com.bukkit.the31.Reroute;
+
+import java.io.File;
+import java.util.HashMap;
+import org.bukkit.entity.Player;
+import org.bukkit.Server;
+import org.bukkit.event.Event.Priority;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.*;
+import org.bukkit.plugin.java.JavaPlugin;
+/**
+ * Routecraft
+ *
+ * Has:
+ *   Accelerators
+ *     Place rails on top of obsidian.
+ *
+ * @author 31
+ */
+public class Routecraft extends JavaPlugin
+{
+	private final RRVehicleMoveListener vehicleListener = new RRVehicleMoveListener(this);
+
+	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
+
+	public Routecraft(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
+	{
+		super(pluginLoader, instance, desc, folder, plugin, cLoader);
+	}
+
+	public void onEnable()
+	{
+		//Register events.
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener , Priority.Highest, this);
+
+		//Print to the console that the plugin is enabled!
+		PluginDescriptionFile pdfFile = this.getDescription();
+		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+	}
+
+	public void onDisable()
+	{
+		PluginDescriptionFile pdfFile = this.getDescription();
+		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is disabled!");
+	}
+
+	public boolean isDebugging(final Player player)
+	{
+		if (debugees.containsKey(player))
+		{
+			return debugees.get(player);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public void setDebugging(final Player player, final boolean value)
+	{
+		debugees.put(player, value);
+	}
+}
