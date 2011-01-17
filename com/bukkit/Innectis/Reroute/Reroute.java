@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
+
 import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPlugin;
 /**
@@ -20,8 +21,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Reroute extends JavaPlugin
 {
 	private final RRVehicleMoveListener vehicleListener = new RRVehicleMoveListener(this);
+	private final RRBlockListener blockListener = new RRBlockListener(this);
 
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
+
+	private final RailGraph rails = new RailGraph();
 
 	public Reroute(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
 	{
@@ -32,11 +36,18 @@ public class Reroute extends JavaPlugin
 	{
 		//Register events.
 		PluginManager pm = getServer().getPluginManager();
+
 		pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener , Priority.Highest, this);
+		pm.registerEvent(Event.Type.BLOCK_RIGHTCLICKED, blockListener , Priority.High, this);
 
 		//Print to the console that the plugin is enabled!
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+	}
+
+	public RailGraph getRails()
+	{
+		return rails;
 	}
 
 	public void onDisable()
