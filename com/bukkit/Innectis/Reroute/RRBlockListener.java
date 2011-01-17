@@ -49,7 +49,7 @@ public class RRBlockListener extends BlockListener
 					System.out.println("New station: "+stationName);
 					RailNode newNode = new RailNode(event.getBlock().getWorld(), stationName);
 					newNode.setLocation(playerloc.getBlockX(), playerloc.getBlockY(), playerloc.getBlockZ());
-					newNode.explore();
+					newNode.explore(plugin.getRails());
 				}
 			}
 		}

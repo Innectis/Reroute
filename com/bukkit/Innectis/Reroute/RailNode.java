@@ -73,7 +73,7 @@ public class RailNode
 	 * them together.
 	 * Uses a breadth-first search.
 	 */
-	public void explore()
+	public void explore(RailGraph railg)
 	{
 		Queue<Loc> locs = new LinkedList<Loc>();
 		locs.add(new Loc(x, y, z, -1));
@@ -136,7 +136,8 @@ public class RailNode
 					//Now see if there are the proper 4 iron blocks around this junction.
 					if(junctionExists(midx, midy, midz))
 					{
-						
+						RailNode newNode = new RailNode(w);
+						newNode.setLocation(midx, midy, midz);
 					}
 
 				}
