@@ -78,12 +78,21 @@ public class RailNode
 		Queue<Loc> locs = new LinkedList<Loc>();
 		locs.add(new Loc(x, y, z, -1));
 
+		//Explore this many tiles before aborting unconditionally.
+		int emergencystop = 1000000;
+
 		while(locs.size() > 0)
 		{
+			if(emergencystop-- == 0)
+			{
+				System.out.println("Rail exploration took too long--interrupted by emergencystop.");
+				break;
+			}
 			Loc l = locs.remove();
 			Material m = w.getBlockAt(l.x, l.y, l.z).getType();
 			if(m.equals(Material.RAILS))
 			{
+				//r represents where the next rail should *not* explore.
 				if(l.r != 0)
 					locs.add(new Loc(l.x+1, l.y, l.z, 2));
 				if(l.r != 1)
@@ -100,8 +109,51 @@ public class RailNode
 				{
 					//If at the end of the rail there is an iron block...
 					int midx, midy, midz; //Middle of the junction. If it exists.
+					midy = l.y-1;
+					//Based on how the junction is entered, the x and z values will be different relative to the original loc.
+					switch(l.r)
+					{
+						case 0: //Opposite +x
+							midx = l.x - 1;
+							midz = l.z + 1;
+							break;
+						case 1: //Opposite +z
+							midx = l.x - 1;
+							midz = l.z - 1;
+							break;
+						case 2: //Opposite -x
+							midx = l.x + 1;
+							midz = l.z - 1;
+							break;
+						case 3: //Opposite -z
+							midx = l.x + 1;
+							midz = l.z + 1;
+							break;
+						default:
+							midx = l.x;
+							midz = l.z;
+					}
+					//Now see if there are the proper 4 iron blocks around this junction.
+					if(junctionExists(midx, midy, midz))
+					{
+						
+					}
+
 				}
 			}
 		}
+	}
+
+	/**
+	 * Checks for a junction centered around (midx, midy, midz).
+	 */
+	public boolean junctionExists(int midx, int midy, int midz)
+	{
+		w.getBlockAt(midx, midy+3, midz).setType(Material.BOOKSHELF);
+		return
+			w.getBlockAt(midx+1, midy, midz+1).getType().equals(Material.IRON_BLOCK) &&
+			w.getBlockAt(midx-1, midy, midz+1).getType().equals(Material.IRON_BLOCK) &&
+			w.getBlockAt(midx+1, midy, midz-1).getType().equals(Material.IRON_BLOCK) &&
+			w.getBlockAt(midx-1, midy, midz-1).getType().equals(Material.IRON_BLOCK);
 	}
 }
