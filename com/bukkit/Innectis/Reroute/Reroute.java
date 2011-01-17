@@ -2,6 +2,9 @@ package com.bukkit.Innectis.Reroute;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.bukkit.entity.Player;
 import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
@@ -9,12 +12,12 @@ import org.bukkit.event.Event;
 
 import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPlugin;
+
 /**
- * Reroute
+ * Innectis Reroute plugin class
  *
- * Has:
- *   Accelerators
- *     Place rails on top of obsidian.
+ * Features:
+ *   Accelerators: place rails on Obsidian.
  *
  * @author Innectis
  */
@@ -23,6 +26,7 @@ public class Reroute extends JavaPlugin
 	private final RRVehicleMoveListener vehicleListener = new RRVehicleMoveListener(this);
 	private final RRBlockListener blockListener = new RRBlockListener(this);
 
+	private final static Logger logger = Logger.getLogger("Minecraft");
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
 	private final RailGraph rails = new RailGraph();
@@ -34,26 +38,35 @@ public class Reroute extends JavaPlugin
 
 	public void onEnable()
 	{
-		//Register events.
+		// Register events
 		PluginManager pm = getServer().getPluginManager();
-
 		pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener , Priority.Highest, this);
 		pm.registerEvent(Event.Type.BLOCK_RIGHTCLICKED, blockListener , Priority.High, this);
 
-		//Print to the console that the plugin is enabled!
+		// Say hi
 		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
-	}
-
-	public RailGraph getRails()
-	{
-		return rails;
+		log(pdfFile.getName() + " v" + pdfFile.getVersion() + " enabled");
 	}
 
 	public void onDisable()
 	{
 		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is disabled!");
+		log(pdfFile.getName() + " v" + pdfFile.getVersion() + " disabled");
+	}
+
+	public void log(String text)
+	{
+		logger.log(Level.INFO, text);
+	}
+
+	public void logWarning(String text)
+	{
+		logger.log(Level.WARNING, text);
+	}
+
+	public RailGraph getRails()
+	{
+		return rails;
 	}
 
 	public boolean isDebugging(final Player player)
