@@ -94,9 +94,13 @@ public class RailNode
 					locs.add(new Loc(l.x, l.y, l.z-1, 1));
 				//w.getBlockAt(l.x, l.y, l.z).setType(Material.SAND);
 			}
-			else if(m.equals(Material.IRON_BLOCK))
+			else if(m.equals(Material.AIR))
 			{
-				
+				if(w.getBlockAt(l.x, l.y-1, l.z).getType().equals(Material.IRON_BLOCK))
+				{
+					//If at the end of the rail there is an iron block...
+					int midx, midy, midz; //Middle of the junction. If it exists.
+				}
 			}
 		}
 	}
