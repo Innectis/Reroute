@@ -26,7 +26,6 @@ public class Reroute extends JavaPlugin
 	private final RRVehicleMoveListener vehicleListener = new RRVehicleMoveListener(this);
 	private final RRBlockListener blockListener = new RRBlockListener(this);
 
-	private final static Logger logger = Logger.getLogger("Minecraft");
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
 	private final RailGraph rails = new RailGraph();
@@ -45,23 +44,13 @@ public class Reroute extends JavaPlugin
 
 		// Say hi
 		PluginDescriptionFile pdfFile = this.getDescription();
-		log(pdfFile.getName() + " v" + pdfFile.getVersion() + " enabled");
+		Helper.log(pdfFile.getName() + " v" + pdfFile.getVersion() + " enabled");
 	}
 
 	public void onDisable()
 	{
 		PluginDescriptionFile pdfFile = this.getDescription();
-		log(pdfFile.getName() + " v" + pdfFile.getVersion() + " disabled");
-	}
-
-	public void log(String text)
-	{
-		logger.log(Level.INFO, text);
-	}
-
-	public void logWarning(String text)
-	{
-		logger.log(Level.WARNING, text);
+		Helper.log(pdfFile.getName() + " v" + pdfFile.getVersion() + " disabled");
 	}
 
 	public RailGraph getRails()

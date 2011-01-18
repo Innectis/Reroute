@@ -32,7 +32,7 @@ public class RRBlockListener extends BlockListener
 		// It might be possible to make an infinite rail loop! Inspection
 		// should be done for this, just in case.
 		//Also check to see if it's a sign post.
-		if(event.getBlock().getType().equals(Material.SIGN_POST) && event.getPlayer().getName().equals("31eee384"))
+		if(event.getBlock().getType().equals(Material.SIGN_POST))
 		{
 			//If it's a sign, get the sign.
 			Sign s = (Sign)event.getBlock().getState();
