@@ -36,6 +36,7 @@ public class RouteNode {
 	public NodeType getNodeType() { return nodeType; }
 
 	public RouteNode getConnected(int i) { return connected[i]; }
+	public void setConnected(int i, RouteNode node) { connected[i] = node; }
 
 	public String getName() { return nodeName; }
 

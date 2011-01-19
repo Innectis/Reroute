@@ -30,7 +30,9 @@ public class Helper {
 	{
 		World w = loc.getWorld();
 		int x = loc.getBlockX(), y = loc.getBlockY(), z = loc.getBlockZ();
-		switch (direction % 4) {
+		direction %= 4;
+		if (direction < 0) direction += 4;
+		switch (direction) {
 			case 0: // North
 				return new Location(w, x-1, y, z);
 			case 1: // East
@@ -39,7 +41,7 @@ public class Helper {
 				return new Location(w, x+1, y, z);
 			case 3: // West
 				return new Location(w, x, y, z+1);
-			default:
+			default: // Should never get here.
 				return new Location(w, x, y, z);
 		}
 	}
