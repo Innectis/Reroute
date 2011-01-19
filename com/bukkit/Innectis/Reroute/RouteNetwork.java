@@ -20,13 +20,10 @@ public class RouteNetwork {
 	public RouteNetwork(Block start)
 	{
 		RouteNode home = new RouteNode(start, RouteNode.NodeType.TERMINAL, "Home");
-		// for now, assume it's a valid station
 		nodes.add(home);
-		Helper.log("Preparing to crawl");
+		System.out.println("Crawling from " + start);
 		for (int i = 0; i < 4; ++i) {
-			Helper.log("Checking: material at " + Helper.offset(start, i).toString() +
-					" is " + Helper.getBlock(Helper.offset(start, i)).getType());
-			if (Material.WALL_SIGN.equals(Helper.getBlock(Helper.offset(start, i)).getType())) {
+			if (Material.WALL_SIGN.equals(Helper.offset(start, i).getType())) {
 				crawl(home, i);
 				break;
 			}
@@ -35,35 +32,35 @@ public class RouteNetwork {
 
 	private void crawl(RouteNode from, int facing)
 	{
-		Helper.log("Reroute is crawling...");
+		System.out.println("  Crawling " + facing + " " + from.getBlock());
 		int origFacing = facing;
 		Block loc = from.getBlock();
 		// Move two blocks away - gets us onto standard track.
 		loc = Helper.offset(Helper.offset(loc, facing), facing);
 
 		while (true) {
-			if (Material.WALL_SIGN.equals(Helper.getBlock(loc).getType())) {
+			if (Material.WALL_SIGN.equals(loc.getType())) {
 				// We probably hit a station
-				Sign sign = (Sign) Helper.getBlock(loc).getState();
+				Sign sign = (Sign) loc.getState();
 				if (sign.getLine(0).equals("[Reroute]") && sign.getLine(1).equals("Station")) {
 					String name = sign.getLine(2);
-					Block newLoc = Helper.offset(loc, facing);
-					// Assuming Junctions aren't asploded, this is new.
+					// Assuming Junctions aren't asploded, this is always new.
+					// Centerpoint of a station is the wall sign's location.
 					RouteNode node = getNodeByName(name);
 					if (node == null) {
-						node = new RouteNode(newLoc, RouteNode.NodeType.TERMINAL, name);
+						node = new RouteNode(loc, RouteNode.NodeType.TERMINAL, name);
 						from.setConnected(origFacing, node);
 						node.setConnected((facing + 2) % 4, from);
 						// Since stations are dead-ends, no need to branch.
 					}
 					break;
 				}
-			} else if (Material.IRON_BLOCK.equals(Helper.getBlock(loc).getType())) {
+			} else if (Material.IRON_BLOCK.equals(loc.getType())) {
 				// We probably hit a junction
 				Block newLoc = Helper.offset(loc, facing);
 				RouteNode node = getNodeByBlock(newLoc);
 				if (node == null) {
-					node = new RouteNode(newLoc, RouteNode.NodeType.JUNCTION, "j");
+					node = new RouteNode(newLoc, RouteNode.NodeType.JUNCTION, "Junction");
 					from.setConnected(origFacing, node);
 					node.setConnected((facing + 2) % 4, from);
 					// Branch to the other three directions.
@@ -76,8 +73,7 @@ public class RouteNetwork {
 				break;
 			} else if (trackExists(Helper.offset(loc, facing + 1)) &&
 					trackExists(Helper.offset(loc, facing - 1))) {
-				// straightahead
-				loc = Helper.offset(loc, facing);
+				// straightahead, see below
 			} else if (trackExists(Helper.offset(loc, facing + 1)) &&
 					trackExists(Helper.offset(loc, facing)) &&
 					!trackExists(Helper.offset(loc, facing - 1))) {
@@ -93,7 +89,8 @@ public class RouteNetwork {
 				// Dead end!
 				break;
 			}
-			Helper.getBlock(loc).setType(Material.WOOL);
+			// Debugging.
+			loc.setType(Material.GLASS);
 			loc = Helper.offset(loc, facing);
 		}
 	}

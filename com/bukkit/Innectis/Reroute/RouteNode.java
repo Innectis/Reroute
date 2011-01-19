@@ -1,6 +1,7 @@
 package com.bukkit.Innectis.Reroute;
 
 import org.bukkit.block.Block;
+import org.bukkit.Material;
 
 /**
  * Reroute route node
@@ -13,7 +14,7 @@ public class RouteNode {
 	public enum NodeType { JUNCTION, TERMINAL };
 
 	// World and coordinates of this block
-	private Block Block;
+	private Block location;
 
 	// Type of this node
 	private NodeType nodeType = NodeType.JUNCTION;
@@ -26,13 +27,14 @@ public class RouteNode {
 
 	public RouteNode(Block center, NodeType type, String name)
 	{
-		Block = center;
+		location = center;
 		nodeType = type;
 		nodeName = name;
-		Helper.log("Node constructed: " + name + " at " + center);
+		center.getWorld().getBlockAt(center.getX(), center.getY() + 3, center.getZ()).setType(Material.GLASS);
+		System.out.println("Node " + name + " at " + center);
 	}
 
-	public Block getBlock() { return Block; }
+	public Block getBlock() { return location; }
 
 	public NodeType getNodeType() { return nodeType; }
 

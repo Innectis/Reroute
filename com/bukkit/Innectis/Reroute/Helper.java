@@ -35,19 +35,14 @@ public class Helper {
 			case 0: // North
 				return w.getBlockAt(x-1, y, z);
 			case 1: // East
-				return w.getBlockAt(z, y, z-1);
+				return w.getBlockAt(x, y, z-1);
 			case 2: // South
 				return w.getBlockAt(x+1, y, z);
 			case 3: // West
 				return w.getBlockAt(x, y, z+1);
 			default: // Should never get here.
-				return w.getBlockAt(x, y, z);
+				return null;
 		}
-	}
-
-	public static Block getBlock(Block loc)
-	{
-		return loc.getWorld().getBlockAt(loc.getX(), loc.getY(), loc.getZ());
 	}
 
 }

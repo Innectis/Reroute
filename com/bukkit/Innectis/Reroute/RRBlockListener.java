@@ -36,7 +36,7 @@ public class RRBlockListener extends BlockListener
 		if(event.getBlock().getType().equals(Material.SIGN_POST))
 		{
 			//If it's a sign, get the sign.
-			Sign s = (Sign)event.getBlock().getState();
+			Sign s = (Sign) event.getBlock().getState();
 			String[] lines = s.getLines();
 			if(lines[0].equals("station")) //First line of the sign must be "station"
 			{
@@ -54,11 +54,12 @@ public class RRBlockListener extends BlockListener
 				}
 			} else if (lines[0].equals("[Reroute]")) {
 				if (lines[1].equals("Goto")) {
-					Helper.log("Goto sign whacked");
+					System.out.println("Goto sign whacked");
 					// home sign was right-clicked. temp shenanigans.
 					Block b = event.getBlock();
-					plugin.network = new RouteNetwork(b.getWorld().getBlockAt
-							(b.getX(), b.getY()-1, b.getZ()));
+					System.out.println("Whack @ " + b);
+					System.out.println("Clone @ " + b.getWorld().getBlockAt(b.getX(), b.getY(), b.getZ()));
+					plugin.network = new RouteNetwork(s.getWorld().getBlockAt(s.getX(), s.getY() - 1, s.getZ()));
 				}
 			}
 		}
