@@ -29,6 +29,7 @@ public class Reroute extends JavaPlugin
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 
 	private final RailGraph rails = new RailGraph();
+	public RouteNetwork network = null;
 
 	public Reroute(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader)
 	{

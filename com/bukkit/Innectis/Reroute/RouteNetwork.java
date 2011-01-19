@@ -3,7 +3,7 @@ package com.bukkit.Innectis.Reroute;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.Material;
 
@@ -17,12 +17,15 @@ public class RouteNetwork {
 
 	public List<RouteNode> nodes = new ArrayList<RouteNode>();
 
-	public RouteNetwork(Location start)
+	public RouteNetwork(Block start)
 	{
 		RouteNode home = new RouteNode(start, RouteNode.NodeType.TERMINAL, "Home");
 		// for now, assume it's a valid station
 		nodes.add(home);
+		Helper.log("Preparing to crawl");
 		for (int i = 0; i < 4; ++i) {
+			Helper.log("Checking: material at " + Helper.offset(start, i).toString() +
+					" is " + Helper.getBlock(Helper.offset(start, i)).getType());
 			if (Material.WALL_SIGN.equals(Helper.getBlock(Helper.offset(start, i)).getType())) {
 				crawl(home, i);
 				break;
@@ -32,8 +35,9 @@ public class RouteNetwork {
 
 	private void crawl(RouteNode from, int facing)
 	{
+		Helper.log("Reroute is crawling...");
 		int origFacing = facing;
-		Location loc = from.getLocation();
+		Block loc = from.getBlock();
 		// Move two blocks away - gets us onto standard track.
 		loc = Helper.offset(Helper.offset(loc, facing), facing);
 
@@ -43,7 +47,7 @@ public class RouteNetwork {
 				Sign sign = (Sign) Helper.getBlock(loc).getState();
 				if (sign.getLine(0).equals("[Reroute]") && sign.getLine(1).equals("Station")) {
 					String name = sign.getLine(2);
-					Location newLoc = Helper.offset(loc, facing);
+					Block newLoc = Helper.offset(loc, facing);
 					// Assuming Junctions aren't asploded, this is new.
 					RouteNode node = getNodeByName(name);
 					if (node == null) {
@@ -56,8 +60,8 @@ public class RouteNetwork {
 				}
 			} else if (Material.IRON_BLOCK.equals(Helper.getBlock(loc).getType())) {
 				// We probably hit a junction
-				Location newLoc = Helper.offset(loc, facing);
-				RouteNode node = getNodeByLocation(newLoc);
+				Block newLoc = Helper.offset(loc, facing);
+				RouteNode node = getNodeByBlock(newLoc);
 				if (node == null) {
 					node = new RouteNode(newLoc, RouteNode.NodeType.JUNCTION, "j");
 					from.setConnected(origFacing, node);
@@ -89,16 +93,16 @@ public class RouteNetwork {
 				// Dead end!
 				break;
 			}
+			Helper.getBlock(loc).setType(Material.WOOL);
 			loc = Helper.offset(loc, facing);
 		}
 	}
 
-	private boolean trackExists(Location loc)
+	private boolean trackExists(Block loc)
 	{
-		Location loc2 = new Location(loc.getWorld(),
-				loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ());
-		return Material.COBBLESTONE.equals(Helper.getBlock(loc).getType()) &&
-				Material.RAILS.equals(Helper.getBlock(loc2).getType());
+		Block loc2 = loc.getWorld().getBlockAt(loc.getX(), loc.getY() + 1, loc.getZ());
+		return Material.COBBLESTONE.equals(loc.getType()) &&
+				Material.RAILS.equals(loc2.getType());
 	}
 
 	public RouteNode getNodeByName(String name)
@@ -111,10 +115,10 @@ public class RouteNetwork {
 		return null;
 	}
 
-	public RouteNode getNodeByLocation(Location loc)
+	public RouteNode getNodeByBlock(Block loc)
 	{
 		for (int i = 0; i < nodes.size(); ++i) {
-			if (nodes.get(i).getLocation().equals(loc)) {
+			if (nodes.get(i).getBlock().equals(loc)) {
 				return nodes.get(i);
 			}
 		}

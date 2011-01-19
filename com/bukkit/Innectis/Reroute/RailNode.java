@@ -2,12 +2,8 @@ package com.bukkit.Innectis.Reroute;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 
 /**
  * A single node in the rail graph.
@@ -21,7 +17,7 @@ public class RailNode
 	}
 	private NodeType type;
 
-	//A location class used for exploring paths.
+	//A Block class used for exploring paths.
 	private class Loc
 	{
 		public int x,y,z;
@@ -42,7 +38,7 @@ public class RailNode
 	//The other nodes that this one links to.
 	private LinkedList<RailNode> links;
 
-	//The location specific to this node, and the world it exists in.
+	//The Block specific to this node, and the world it exists in.
 	//For a Station, this is a block of rail.
 	//For a Junction, this is the "upper-left" corner.
 	private World w;
@@ -61,7 +57,7 @@ public class RailNode
 		this.w = w;
 	}
 
-	public void setLocation(int x, int y, int z)
+	public void setBlock(int x, int y, int z)
 	{
 		this.x = x;
 		this.y = y;
@@ -137,7 +133,7 @@ public class RailNode
 					if(junctionExists(midx, midy, midz))
 					{
 						RailNode newNode = new RailNode(w);
-						newNode.setLocation(midx, midy, midz);
+						newNode.setBlock(midx, midy, midz);
 					}
 
 				}

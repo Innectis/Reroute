@@ -8,6 +8,7 @@ package com.bukkit.Innectis.Reroute;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockRightClickEvent;
 
@@ -48,8 +49,16 @@ public class RRBlockListener extends BlockListener
 				{
 					System.out.println("New station: "+stationName);
 					RailNode newNode = new RailNode(event.getBlock().getWorld(), stationName);
-					newNode.setLocation(playerloc.getBlockX(), playerloc.getBlockY(), playerloc.getBlockZ());
+					newNode.setBlock(playerloc.getBlockX(), playerloc.getBlockY(), playerloc.getBlockZ());
 					newNode.explore(plugin.getRails());
+				}
+			} else if (lines[0].equals("[Reroute]")) {
+				if (lines[1].equals("Goto")) {
+					Helper.log("Goto sign whacked");
+					// home sign was right-clicked. temp shenanigans.
+					Block b = event.getBlock();
+					plugin.network = new RouteNetwork(b.getWorld().getBlockAt
+							(b.getX(), b.getY()-1, b.getZ()));
 				}
 			}
 		}
