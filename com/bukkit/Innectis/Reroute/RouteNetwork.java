@@ -19,13 +19,17 @@ public class RouteNetwork {
 
 	public RouteNetwork(Block start)
 	{
-		RouteNode home = new RouteNode(start, RouteNode.NodeType.TERMINAL, "Home");
-		nodes.add(home);
 		System.out.println("Crawling from " + start);
 		for (int i = 0; i < 4; ++i) {
-			if (Material.WALL_SIGN.equals(Helper.offset(start, i).getType())) {
-				crawl(home, i);
-				break;
+			Block b = Helper.offset(start, i);
+			if (Material.WALL_SIGN.equals(b.getType())) {
+				Sign s = (Sign) b.getState();
+				if (s.getLine(0).equals("[Reroute]") && s.getLine(1).equals("Station")) {
+					RouteNode home = new RouteNode(b, RouteNode.NodeType.TERMINAL, s.getLine(2));
+					nodes.add(home);
+					crawl(home, i);
+					break;
+				}
 			}
 		}
 	}
@@ -39,30 +43,35 @@ public class RouteNetwork {
 		loc = Helper.offset(Helper.offset(loc, facing), facing);
 
 		while (true) {
+			Block fm1 = Helper.offset(loc, facing - 1);		// facing - 1 (L)
+			Block fwd = Helper.offset(loc, facing);			// forward
+			Block fp1 = Helper.offset(loc, facing + 1);		// facing + 1 (R)
 			if (Material.WALL_SIGN.equals(loc.getType())) {
 				// We probably hit a station
 				Sign sign = (Sign) loc.getState();
 				if (sign.getLine(0).equals("[Reroute]") && sign.getLine(1).equals("Station")) {
 					String name = sign.getLine(2);
-					// Assuming Junctions aren't asploded, this is always new.
-					// Centerpoint of a station is the wall sign's location.
-					RouteNode node = getNodeByName(name);
+					// Assuming junctions aren't asploded, this is always new,
+					// but a check is in place just to make sure. Centerpoint
+					// of a terminal is the wall sign's location.
+					RouteNode node = getNodeByLocation(loc);
 					if (node == null) {
 						node = new RouteNode(loc, RouteNode.NodeType.TERMINAL, name);
-						from.setConnected(origFacing, node);
-						node.setConnected((facing + 2) % 4, from);
-						// Since stations are dead-ends, no need to branch.
 					}
+					from.setConnected(origFacing, node);
+					node.setConnected((facing + 2) % 4, from);
 					break;
 				}
 			} else if (Material.IRON_BLOCK.equals(loc.getType())) {
-				// We probably hit a junction
-				Block newLoc = Helper.offset(loc, facing);
-				RouteNode node = getNodeByBlock(newLoc);
-				if (node == null) {
-					node = new RouteNode(newLoc, RouteNode.NodeType.JUNCTION, "Junction");
-					from.setConnected(origFacing, node);
-					node.setConnected((facing + 2) % 4, from);
+				// We hit a junction. Don't create
+				RouteNode node = getNodeByLocation(fwd);
+				boolean isNew = (node == null);
+				if (isNew) {
+					node = new RouteNode(fwd, RouteNode.NodeType.JUNCTION, "Junction");
+				}
+				from.setConnected(origFacing, node);
+				node.setConnected((facing + 2) % 4, from);
+				if (isNew) {
 					// Branch to the other three directions.
 					for (int i = -1; i <= 1; ++i) {
 						int nf = (facing + i) % 4;
@@ -71,20 +80,24 @@ public class RouteNetwork {
 					}
 				}
 				break;
-			} else if (trackExists(Helper.offset(loc, facing + 1)) &&
-					trackExists(Helper.offset(loc, facing - 1))) {
-				// straightahead, see below
-			} else if (trackExists(Helper.offset(loc, facing + 1)) &&
-					trackExists(Helper.offset(loc, facing)) &&
-					!trackExists(Helper.offset(loc, facing - 1))) {
+				// Done crawling.
+			} else if (trackExists(fp1) && trackExists(fm1)) {
+				// straightahead (handled below)
+			} else if (trackExists(fp1) && trackExists(fwd) && !trackExists(fm1)) {
 				// left turn
 				facing = (facing - 1) % 4;
 				if (facing < 0) facing += 4;
-			} else if (trackExists(Helper.offset(loc, facing - 1)) &&
-					trackExists(Helper.offset(loc, facing)) &&
-					!trackExists(Helper.offset(loc, facing + 1))) {
+			} else if (trackExists(fm1) && trackExists(fwd) && !trackExists(fp1)) {
 				// right turn
 				facing = (facing + 1) % 4;
+			} else if (trackExists(loc.getWorld().getBlockAt(fm1.getX(), loc.getY() - 1, fm1.getZ())) &&
+					trackExists(loc.getWorld().getBlockAt(fp1.getX(), loc.getY() - 1, fp1.getZ()))) {
+				// downwards slope
+				loc = loc.getWorld().getBlockAt(loc.getX(), loc.getY() - 1, loc.getZ());
+			} else if (trackExists(loc.getWorld().getBlockAt(fm1.getX(), loc.getY() + 1, fm1.getZ())) &&
+					trackExists(loc.getWorld().getBlockAt(fp1.getX(), loc.getY() + 1, fp1.getZ()))) {
+				// upwards slope
+				loc = loc.getWorld().getBlockAt(loc.getX(), loc.getY() + 1, loc.getZ());
 			} else {
 				// Dead end!
 				break;
@@ -112,7 +125,7 @@ public class RouteNetwork {
 		return null;
 	}
 
-	public RouteNode getNodeByBlock(Block loc)
+	public RouteNode getNodeByLocation(Block loc)
 	{
 		for (int i = 0; i < nodes.size(); ++i) {
 			if (nodes.get(i).getBlock().equals(loc)) {

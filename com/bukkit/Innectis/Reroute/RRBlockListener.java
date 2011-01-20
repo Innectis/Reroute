@@ -53,13 +53,12 @@ public class RRBlockListener extends BlockListener
 					newNode.explore(plugin.getRails());
 				}
 			} else if (lines[0].equals("[Reroute]")) {
-				if (lines[1].equals("Goto")) {
-					System.out.println("Goto sign whacked");
-					// home sign was right-clicked. temp shenanigans.
+				if (lines[1].equals("Crawl")) {
 					Block b = event.getBlock();
-					System.out.println("Whack @ " + b);
-					System.out.println("Clone @ " + b.getWorld().getBlockAt(b.getX(), b.getY(), b.getZ()));
+					s.setLine(2, "Crawling...");
 					plugin.network = new RouteNetwork(s.getWorld().getBlockAt(s.getX(), s.getY() - 1, s.getZ()));
+					s.setLine(1, "Goto");
+					s.setLine(2, "");
 				}
 			}
 		}
