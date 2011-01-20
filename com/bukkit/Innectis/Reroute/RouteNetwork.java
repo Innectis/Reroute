@@ -103,7 +103,10 @@ public class RouteNetwork {
 				break;
 			}
 			// Debugging.
-			loc.setType(Material.GLASS);
+			if(Material.AIR.equals(loc.getType())) {
+				// Debugging purposes.
+				loc.setType(Material.GLASS);
+			}
 			loc = Helper.offset(loc, facing);
 		}
 	}
